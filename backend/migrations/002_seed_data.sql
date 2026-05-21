@@ -16,9 +16,9 @@ INSERT INTO books (title, subtitle, description, author, price, amazon_url, cove
   1
 ),
 (
-  'Post-Divorce Playbook',
-  'Strategies for Thriving as a Single Parent',
-  'A companion guide filled with actionable advice on stress management, raising high achievers, embracing optimism, and building the support network every single parent needs. Natalie Cabinda shares her personal journey and professional expertise in this empowering read.',
+  'Their Gods Were Watching Me',
+  'A Memoir by Natalie Cabinda',
+  'A powerful memoir tracing Natalie Cabinda''s remarkable journey — from her roots to the challenges of single parenthood — and the faith, resilience, and community that carried her through. An intimate and inspiring story of perseverance, identity, and the grace that sustains us.',
   'Natalie Cabinda',
   17.99,
   'https://www.amazon.com',

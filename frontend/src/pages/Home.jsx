@@ -148,14 +148,21 @@ export default function Home() {
             Essential reading for any single parent ready to move forward with intention, hope, and practical guidance.
           </p>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {books.length > 0 ? books.map((book) => (
+            {(books.length > 0 ? books : [
+                { id: '1', title: 'Regroup Refocus Rebuild', subtitle: 'Helping Families Navigate From Break-Ups to Breakthroughs!', cover_image: '/images/book1-cover.png', amazon_url: 'https://www.amazon.com' },
+                { id: '2', title: 'Their Gods Were Watching Me', subtitle: 'A Memoir by Natalie Cabinda', cover_image: '/images/book2-cover.jpg', amazon_url: 'https://www.amazon.com' },
+              ]).map((book) => (
               <div key={book.id} className="bg-white/10 rounded-xl p-8 text-left backdrop-blur border border-white/20 hover:bg-white/20 transition-all">
-                <div className="w-full h-48 bg-gradient-to-br from-accent/30 to-primary-dark rounded-lg mb-6 flex items-center justify-center">
-                  <span className="text-6xl">📚</span>
+                <div className="w-full h-64 rounded-lg mb-6 overflow-hidden flex items-center justify-center bg-primary-dark">
+                  {book.cover_image ? (
+                    <img src={book.cover_image} alt={book.title} className="w-full h-full object-contain" />
+                  ) : (
+                    <span className="text-6xl">📚</span>
+                  )}
                 </div>
                 <h3 className="font-heading text-2xl font-bold text-white mb-2">{book.title}</h3>
                 {book.subtitle && <p className="text-accent text-sm mb-3">{book.subtitle}</p>}
-                <p className="text-white/70 text-sm leading-relaxed mb-4 line-clamp-3">{book.description}</p>
+                {book.description && <p className="text-white/70 text-sm leading-relaxed mb-4 line-clamp-3">{book.description}</p>}
                 <div className="flex gap-3 flex-wrap">
                   {book.amazon_url && (
                     <a href={book.amazon_url} target="_blank" rel="noopener noreferrer" className="btn-outline text-sm py-2">
@@ -165,25 +172,7 @@ export default function Home() {
                   <Link to="/signed-books" className="btn-gold text-sm py-2">Signed Copy</Link>
                 </div>
               </div>
-            )) : (
-              /* Fallback static books with real covers */
-              [
-                { title: 'Regroup Refocus Rebuild', subtitle: 'A Guide for Single Parents Navigating Life After Divorce', img: '/images/book1-cover.png' },
-                { title: 'Post-Divorce Playbook', subtitle: 'Strategies for Thriving as a Single Parent', img: '/images/book2-cover.jpg' },
-              ].map((b) => (
-                <div key={b.title} className="bg-white/10 rounded-xl p-8 text-left backdrop-blur border border-white/20">
-                  <div className="w-full h-56 rounded-lg mb-6 overflow-hidden flex items-center justify-center bg-primary-dark">
-                    <img src={b.img} alt={b.title} className="w-full h-full object-contain" />
-                  </div>
-                  <h3 className="font-heading text-2xl font-bold text-white mb-2">{b.title}</h3>
-                  <p className="text-accent text-sm mb-4">{b.subtitle}</p>
-                  <div className="flex gap-3">
-                    <a href="https://www.amazon.com" target="_blank" rel="noopener noreferrer" className="btn-outline text-sm py-2">Buy on Amazon</a>
-                    <Link to="/signed-books" className="btn-gold text-sm py-2">Signed Copy</Link>
-                  </div>
-                </div>
-              ))
-            )}
+            ))}
           </div>
           <div className="mt-10">
             <Link to="/signed-books" className="btn-primary text-base px-8 py-4">View All Books & Signed Copies</Link>

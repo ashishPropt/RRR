@@ -20,9 +20,9 @@ export default function SignedBooks() {
       price: 19.99, signed_price: 29.99, amazon_url: 'https://amazon.com', is_signed: true, cover_image: '/images/book1-cover.png',
     },
     {
-      id: '2', title: 'Post-Divorce Playbook',
-      subtitle: 'Strategies for Thriving as a Single Parent',
-      description: 'A companion guide filled with actionable advice on stress management, raising high achievers, embracing optimism, and building the support network every single parent needs.',
+      id: '2', title: 'Their Gods Were Watching Me',
+      subtitle: 'A Memoir by Natalie Cabinda',
+      description: "A powerful memoir tracing Natalie Cabinda's remarkable journey — from her roots to the challenges of single parenthood — and the faith, resilience, and community that carried her through.",
       price: 17.99, signed_price: 27.99, amazon_url: 'https://amazon.com', is_signed: true, cover_image: '/images/book2-cover.jpg',
     },
   ];
