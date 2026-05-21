@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-gray-800 bg-white;
+  }
+  h1, h2, h3, h4 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-block bg-accent text-white font-semibold px-6 py-3 rounded transition-all duration-300 hover:bg-accent-dark hover:shadow-lg;
+  }
+  .btn-outline {
+    @apply inline-block border-2 border-accent text-accent font-semibold px-6 py-3 rounded transition-all duration-300 hover:bg-accent hover:text-white;
+  }
+  .btn-gold {
+    @apply inline-block bg-gold text-white font-semibold px-6 py-3 rounded transition-all duration-300 hover:opacity-90 hover:shadow-lg;
+  }
+  .section-title {
+    @apply font-heading text-3xl md:text-4xl font-bold text-primary mb-4;
+  }
+  .section-subtitle {
+    @apply text-accent font-semibold uppercase tracking-widest text-sm mb-2;
+  }
+  .card {
+    @apply bg-white rounded-xl shadow-md overflow-hidden transition-shadow duration-300 hover:shadow-xl;
+  }
+}
+
+/* Slick slider overrides */
+.slick-dots li button:before {
+  color: #fff;
+  font-size: 10px;
+  opacity: 0.6;
+}
+.slick-dots li.slick-active button:before {
+  color: #4ab5c4;
+  opacity: 1;
+}
+.slick-prev:before, .slick-next:before {
+  color: #4ab5c4;
+  font-size: 28px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Blog content styles */
+.blog-content h2 { @apply text-2xl font-heading font-bold mt-8 mb-4 text-primary; }
+.blog-content h3 { @apply text-xl font-heading font-semibold mt-6 mb-3 text-primary; }
+.blog-content p { @apply mb-4 leading-relaxed text-gray-700; }
+.blog-content ul { @apply list-disc pl-6 mb-4 space-y-2 text-gray-700; }
+.blog-content ol { @apply list-decimal pl-6 mb-4 space-y-2 text-gray-700; }
+.blog-content strong { @apply font-semibold text-gray-900; }
+.blog-content blockquote { @apply border-l-4 border-accent pl-4 italic text-gray-600 my-4; }
