@@ -34,6 +34,8 @@ app.use('/api/', limiter);
 app.use('/api/contact', contactLimiter);
 
 // Routes
+const { router: adminRouter } = require('./routes/admin');
+app.use('/api/admin', adminRouter);
 app.use('/api/books', require('./routes/books'));
 app.use('/api/blog', require('./routes/blog'));
 app.use('/api/contact', require('./routes/contact'));

@@ -64,3 +64,5 @@
 .blog-content ol { @apply list-decimal pl-6 mb-4 space-y-2 text-gray-700; }
 .blog-content strong { @apply font-semibold text-gray-900; }
 .blog-content blockquote { @apply border-l-4 border-accent pl-4 italic text-gray-600 my-4; }
+.blog-content a { @apply text-accent underline; }
+.blog-content[contenteditable]:focus { outline: none; }
