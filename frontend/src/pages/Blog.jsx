@@ -87,7 +87,7 @@ export default function Blog() {
                       {post.featured_image ? (
                         <img src={post.featured_image} alt={post.title} className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-5xl">✍️</span>
+                        <img src="/images/child-family.jpg" alt={post.title} className="w-full h-full object-cover opacity-60" />
                       )}
                     </div>
                     <div className="p-6">

@@ -51,7 +51,8 @@ export default function PublicSpeaking() {
               </p>
               <Link to="/contact" className="btn-primary">Book Natalie to Speak</Link>
             </div>
-            <div className="bg-gradient-to-br from-primary to-accent-dark rounded-2xl p-8 text-white">
+            <div className="bg-gradient-to-br from-primary to-accent-dark rounded-2xl p-8 text-white relative overflow-hidden">
+                <img src="/images/natalie-photo2.jpg" alt="Natalie Cabinda speaking" className="absolute inset-0 w-full h-full object-cover opacity-20 object-top" />
               <h3 className="font-heading text-2xl font-bold mb-6">Speaking Topics</h3>
               <ul className="space-y-3">
                 {topics.map(t => (

@@ -38,7 +38,13 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex flex-col leading-tight">
+            <img
+              src="/images/logo.png"
+              alt="Regroup Refocus Rebuild"
+              className="h-10 w-auto"
+              onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }}
+            />
+            <div className="flex-col leading-tight hidden">
               <span className="text-accent font-heading font-bold text-xl tracking-wide">Regroup</span>
               <span className="text-white text-xs tracking-widest uppercase">Refocus · Rebuild</span>
             </div>

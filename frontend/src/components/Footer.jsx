@@ -13,7 +13,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Brand */}
         <div>
-          <h3 className="font-heading text-2xl font-bold text-accent mb-3">Regroup Refocus Rebuild</h3>
+          <img src="/images/logo-final.png" alt="Regroup Refocus Rebuild" className="h-12 w-auto mb-3 brightness-0 invert"
+            onError={(e) => { e.target.style.display='none'; }} />
+          <h3 className="font-heading text-2xl font-bold text-accent mb-3 hidden">Regroup Refocus Rebuild</h3>
           <p className="text-white/70 text-sm leading-relaxed">
             Helping single parents navigate life after divorce with practical strategies,
             community support, and the belief that a better future is always possible.

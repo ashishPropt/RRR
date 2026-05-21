@@ -17,13 +17,13 @@ export default function SignedBooks() {
       id: '1', title: 'Regroup Refocus Rebuild',
       subtitle: 'A Guide for Single Parents Navigating Life After Divorce',
       description: 'Drawing from 18+ years of educational experience, Natalie Cabinda offers practical strategies to help broken families rebuild after divorce. An essential resource for single parents seeking hope, healing, and a roadmap for a better future.',
-      price: 19.99, signed_price: 29.99, amazon_url: 'https://amazon.com', is_signed: true, emoji: '📖',
+      price: 19.99, signed_price: 29.99, amazon_url: 'https://amazon.com', is_signed: true, cover_image: '/images/book1-cover.png',
     },
     {
       id: '2', title: 'Post-Divorce Playbook',
       subtitle: 'Strategies for Thriving as a Single Parent',
       description: 'A companion guide filled with actionable advice on stress management, raising high achievers, embracing optimism, and building the support network every single parent needs.',
-      price: 17.99, signed_price: 27.99, amazon_url: 'https://amazon.com', is_signed: true, emoji: '📗',
+      price: 17.99, signed_price: 27.99, amazon_url: 'https://amazon.com', is_signed: true, cover_image: '/images/book2-cover.jpg',
     },
   ];
 
@@ -55,12 +55,17 @@ export default function SignedBooks() {
                   {/* Book visual */}
                   <div className={`${i % 2 === 1 ? 'md:order-2' : ''}`}>
                     <div className="relative">
-                      <div className="w-full max-w-sm mx-auto h-80 bg-gradient-to-br from-primary to-accent-dark rounded-2xl shadow-2xl flex items-center justify-center">
-                        <div className="text-center text-white px-6">
-                          <div className="text-7xl mb-4">{book.emoji || '📚'}</div>
-                          <h3 className="font-heading text-xl font-bold leading-tight">{book.title}</h3>
-                          <p className="text-accent text-sm mt-2">{book.author || 'Natalie Cabinda'}</p>
-                        </div>
+                      <div className="w-full max-w-sm mx-auto h-80 rounded-2xl shadow-2xl overflow-hidden bg-primary-dark">
+                        {book.cover_image ? (
+                          <img src={book.cover_image} alt={book.title} className="w-full h-full object-contain" />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-primary to-accent-dark flex items-center justify-center">
+                            <div className="text-center text-white px-6">
+                              <div className="text-7xl mb-4">📚</div>
+                              <h3 className="font-heading text-xl font-bold leading-tight">{book.title}</h3>
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <div className="absolute -top-3 -right-3 bg-gold text-white text-xs font-bold px-3 py-2 rounded-full shadow">
                         SIGNED

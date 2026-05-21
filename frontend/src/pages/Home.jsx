@@ -6,23 +6,29 @@ import { blogApi, booksApi } from '../services/api';
 
 const heroSlides = [
   {
-    bg: 'bg-gradient-to-br from-primary to-primary-dark',
+    img: '/images/hero-park.jpg',
     title: 'Regroup. Refocus. Rebuild.',
     subtitle: 'Practical strategies for single parents navigating life after divorce.',
     cta: { label: 'Get the Book', path: '/signed-books' },
   },
   {
-    bg: 'bg-gradient-to-br from-primary-dark to-accent-dark',
+    img: '/images/hero-women.jpg',
     quote: '"This book gave me hope when I thought there was none left."',
     quoteAuthor: '— A Grateful Reader',
     title: 'You Are Stronger Than You Know',
     cta: { label: 'Read the Blog', path: '/blog' },
   },
   {
-    bg: 'bg-gradient-to-br from-accent-dark to-primary',
+    img: '/images/hero-ocean.jpg',
     title: 'Rebuilding Takes Courage',
     subtitle: 'Join a community of resilient single parents moving forward together.',
     cta: { label: 'Learn More', path: '/about' },
+  },
+  {
+    img: '/images/child-family.jpg',
+    title: 'Your Children Are Watching',
+    subtitle: 'Show them what resilience looks like. Every single day.',
+    cta: { label: 'Our Mission', path: '/rrr-non-profit' },
   },
 ];
 
@@ -55,9 +61,11 @@ export default function Home() {
         <Slider {...sliderSettings}>
           {heroSlides.map((slide, i) => (
             <div key={i}>
-              <div className={`${slide.bg} min-h-[600px] md:min-h-[700px] flex items-center justify-center px-4 relative`}>
-                <div className="absolute inset-0 opacity-5"
-                  style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/svg%3E")' }} />
+              <div className="min-h-[600px] md:min-h-[700px] flex items-center justify-center px-4 relative overflow-hidden">
+                {/* Background photo */}
+                <img src={slide.img} alt="" className="absolute inset-0 w-full h-full object-cover object-center" />
+                {/* Dark overlay */}
+                <div className="absolute inset-0 bg-primary/70" />
                 <div className="relative text-center max-w-3xl mx-auto fade-in-up">
                   {slide.quote && (
                     <blockquote className="text-2xl md:text-3xl italic text-white/90 mb-4 font-heading leading-relaxed">
@@ -100,13 +108,8 @@ export default function Home() {
             </div>
             <div className="order-1 md:order-2 flex justify-center">
               <div className="relative">
-                <div className="w-72 h-72 md:w-96 md:h-96 rounded-full bg-gradient-to-br from-accent to-primary-dark flex items-center justify-center shadow-2xl">
-                  <div className="text-center text-white px-8">
-                    <div className="text-6xl mb-4">✨</div>
-                    <p className="font-heading text-xl font-bold">Educator</p>
-                    <p className="font-heading text-xl font-bold">Author</p>
-                    <p className="font-heading text-xl font-bold">Mentor</p>
-                  </div>
+                <div className="w-72 h-72 md:w-80 md:h-80 rounded-full overflow-hidden shadow-2xl ring-4 ring-accent/40">
+                  <img src="/images/natalie-author.jpg" alt="Natalie Cabinda" className="w-full h-full object-cover object-top" />
                 </div>
                 <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-gold rounded-full opacity-80" />
                 <div className="absolute -top-4 -left-4 w-16 h-16 bg-accent rounded-full opacity-60" />
@@ -163,14 +166,14 @@ export default function Home() {
                 </div>
               </div>
             )) : (
-              /* Fallback static books */
+              /* Fallback static books with real covers */
               [
-                { title: 'Regroup Refocus Rebuild', subtitle: 'A Guide for Single Parents Navigating Life After Divorce' },
-                { title: 'Post-Divorce Playbook', subtitle: 'Strategies for Thriving as a Single Parent' },
+                { title: 'Regroup Refocus Rebuild', subtitle: 'A Guide for Single Parents Navigating Life After Divorce', img: '/images/book1-cover.png' },
+                { title: 'Post-Divorce Playbook', subtitle: 'Strategies for Thriving as a Single Parent', img: '/images/book2-cover.jpg' },
               ].map((b) => (
                 <div key={b.title} className="bg-white/10 rounded-xl p-8 text-left backdrop-blur border border-white/20">
-                  <div className="w-full h-48 bg-gradient-to-br from-accent/30 to-primary-dark rounded-lg mb-6 flex items-center justify-center">
-                    <span className="text-6xl">📚</span>
+                  <div className="w-full h-56 rounded-lg mb-6 overflow-hidden flex items-center justify-center bg-primary-dark">
+                    <img src={b.img} alt={b.title} className="w-full h-full object-contain" />
                   </div>
                   <h3 className="font-heading text-2xl font-bold text-white mb-2">{b.title}</h3>
                   <p className="text-accent text-sm mb-4">{b.subtitle}</p>

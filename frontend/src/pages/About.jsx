@@ -21,15 +21,15 @@ export default function About() {
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-16 items-start">
-            {/* Photo placeholder */}
+            {/* Author photo */}
             <div className="flex justify-center">
               <div className="relative">
-                <div className="w-80 h-96 bg-gradient-to-br from-primary to-accent-dark rounded-2xl shadow-2xl flex items-center justify-center">
-                  <div className="text-center text-white p-8">
-                    <div className="text-8xl mb-6">👩‍💼</div>
-                    <h3 className="font-heading text-2xl font-bold">Natalie Cabinda</h3>
-                    <p className="text-accent mt-2">Author & Educator</p>
-                  </div>
+                <div className="w-80 h-96 rounded-2xl shadow-2xl overflow-hidden">
+                  <img
+                    src="/images/natalie-author.jpg"
+                    alt="Natalie Cabinda"
+                    className="w-full h-full object-cover object-top"
+                  />
                 </div>
                 <div className="absolute -bottom-6 -right-6 bg-accent text-white px-6 py-4 rounded-xl shadow-lg">
                   <p className="font-bold text-2xl">18+</p>
