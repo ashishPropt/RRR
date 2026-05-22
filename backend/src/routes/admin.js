@@ -260,6 +260,54 @@ router.delete('/products/:id', requireAdmin, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// ── Auction items management ─────────────────────────────────────────────────
+
+router.get('/auction', requireAdmin, async (req, res, next) => {
+  try {
+    const result = await db.query('SELECT * FROM auction_items ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) { next(err); }
+});
+
+router.post('/auction', requireAdmin, async (req, res, next) => {
+  try {
+    const { title, description, starting_bid, current_bid, emoji, image_url, end_date, active } = req.body;
+    if (!title || starting_bid == null) return res.status(400).json({ error: 'title and starting_bid are required' });
+    const result = await db.query(
+      `INSERT INTO auction_items (title,description,starting_bid,current_bid,image_url,end_date,active)
+       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+      [title, description||null, parseFloat(starting_bid)||0,
+       current_bid ? parseFloat(current_bid) : null,
+       image_url||null, end_date||null, active!==false]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) { next(err); }
+});
+
+router.put('/auction/:id', requireAdmin, async (req, res, next) => {
+  try {
+    const { title, description, starting_bid, current_bid, emoji, image_url, end_date, active } = req.body;
+    const result = await db.query(
+      `UPDATE auction_items SET title=$1,description=$2,starting_bid=$3,current_bid=$4,
+       image_url=$5,end_date=$6,active=$7,updated_at=NOW()
+       WHERE id=$8 RETURNING *`,
+      [title, description||null, parseFloat(starting_bid)||0,
+       current_bid ? parseFloat(current_bid) : null,
+       image_url||null, end_date||null, active!==false, req.params.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Auction item not found' });
+    res.json(result.rows[0]);
+  } catch (err) { next(err); }
+});
+
+router.delete('/auction/:id', requireAdmin, async (req, res, next) => {
+  try {
+    const result = await db.query('DELETE FROM auction_items WHERE id=$1 RETURNING id', [req.params.id]);
+    if (!result.rows.length) return res.status(404).json({ error: 'Auction item not found' });
+    res.json({ deleted: true });
+  } catch (err) { next(err); }
+});
+
 // ── Orders management ────────────────────────────────────────────────────────
 
 router.get('/orders', requireAdmin, async (req, res, next) => {

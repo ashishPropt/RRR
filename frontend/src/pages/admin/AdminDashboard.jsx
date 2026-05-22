@@ -89,6 +89,7 @@ export default function AdminDashboard() {
               <Link to="/admin/blog/new" className="btn-primary text-sm">✍️ Write New Post</Link>
               <Link to="/admin/books/new" className="btn-primary text-sm">📚 Add Book</Link>
               <Link to="/admin/products/new" className="btn-primary text-sm">🛍️ Add Product</Link>
+              <Link to="/admin/auction/new" className="btn-primary text-sm">🏷️ Add Auction Item</Link>
               <Link to="/admin/orders" className="btn-outline text-sm">📦 View Orders</Link>
               <a href="/" target="_blank" rel="noopener noreferrer" className="btn-outline text-sm">🌐 View Live Site</a>
             </div>

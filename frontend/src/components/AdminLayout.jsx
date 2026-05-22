@@ -49,10 +49,13 @@ export default function AdminLayout({ children }) {
             <span>➕</span> Add Book
           </NavLink>
           <NavLink to="/admin/products" end className={navClass}>
-            <span>🛍️</span> Boutique Items
+            <span>🛍️</span> Shop Items
           </NavLink>
           <NavLink to="/admin/products/new" className={navClass}>
             <span>➕</span> Add Product
+          </NavLink>
+          <NavLink to="/admin/auction/new" className={navClass}>
+            <span>🏷️</span> Add Auction Item
           </NavLink>
 
           <div className="pt-2 pb-1 px-2 text-white/30 text-xs uppercase tracking-widest">Orders</div>

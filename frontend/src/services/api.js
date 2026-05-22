@@ -60,6 +60,13 @@ export const adminProductsApi = {
   remove: (token, id) => api.delete(`/admin/products/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
 };
 
+export const adminAuctionApi = {
+  getAll: (token) => api.get('/admin/auction', { headers: { Authorization: `Bearer ${token}` } }),
+  create: (token, data) => api.post('/admin/auction', data, { headers: { Authorization: `Bearer ${token}` } }),
+  update: (token, id, data) => api.put(`/admin/auction/${id}`, data, { headers: { Authorization: `Bearer ${token}` } }),
+  remove: (token, id) => api.delete(`/admin/auction/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
+};
+
 export const adminOrdersApi = {
   getAll: (token) => api.get('/admin/orders', { headers: { Authorization: `Bearer ${token}` } }),
   getById: (token, id) => api.get(`/admin/orders/${id}`, { headers: { Authorization: `Bearer ${token}` } }),

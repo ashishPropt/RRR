@@ -28,6 +28,7 @@ import AdminBookList from './pages/admin/AdminBookList';
 import AdminBookForm from './pages/admin/AdminBookForm';
 import AdminProductList from './pages/admin/AdminProductList';
 import AdminProductForm from './pages/admin/AdminProductForm';
+import AdminAuctionForm from './pages/admin/AdminAuctionForm';
 import AdminOrderList from './pages/admin/AdminOrderList';
 
 function PublicLayout({ children }) {
@@ -78,6 +79,12 @@ export default function App() {
           } />
           <Route path="/admin/products/:id" element={
             <RequireAdmin><AdminProductForm /></RequireAdmin>
+          } />
+          <Route path="/admin/auction/new" element={
+            <RequireAdmin><AdminAuctionForm /></RequireAdmin>
+          } />
+          <Route path="/admin/auction/:id" element={
+            <RequireAdmin><AdminAuctionForm /></RequireAdmin>
           } />
           <Route path="/admin/orders" element={
             <RequireAdmin><AdminOrderList /></RequireAdmin>
