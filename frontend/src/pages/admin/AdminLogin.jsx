@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import { useAdmin } from '../../context/AdminContext';
@@ -9,12 +9,12 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, isAuthenticated } = useAdmin();
+  const { login, logout, isAuthenticated } = useAdmin();
   const navigate = useNavigate();
 
+  // Already logged in — go straight to dashboard
   if (isAuthenticated) {
-    navigate('/admin/dashboard', { replace: true });
-    return null;
+    return <Navigate to="/admin/dashboard" replace />;
   }
 
   const handleSubmit = async (e) => {
@@ -22,6 +22,7 @@ export default function AdminLogin() {
     setError('');
     setLoading(true);
     try {
+      logout(); // clear any stale token first
       const res = await axios.post('/api/admin/login', { username: username.trim(), password });
       login(res.data.token, res.data.username);
       navigate('/admin/dashboard');
