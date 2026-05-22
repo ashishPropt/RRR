@@ -4,7 +4,9 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
+const fs = require('fs');
 const rateLimit = require('express-rate-limit');
+const db = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,10 +35,8 @@ const contactLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 10 });
 app.use('/api/', limiter);
 app.use('/api/contact', contactLimiter);
 
-// Run pending migrations on startup
-const fs = require('fs');
-const db = require('./config/database');
-(async () => {
+// Run migrations THEN register routes (ensures tables exist before admin seeding)
+async function runMigrations() {
   const migrDir = path.join(__dirname, '..', 'migrations');
   const files = ['004_cart_admin_users.sql'];
   for (const f of files) {
@@ -45,37 +45,42 @@ const db = require('./config/database');
       await db.query(sql);
       console.log(`[Migration] ${f} OK`);
     } catch (e) {
-      // Ignore "already exists" errors
       if (!e.message.includes('already exists')) console.warn(`[Migration] ${f}:`, e.message);
     }
   }
-})();
+}
 
-// Routes
-const { router: adminRouter } = require('./routes/admin');
-app.use('/api/admin', adminRouter);
-app.use('/api/orders', require('./routes/orders'));
-app.use('/api/books', require('./routes/books'));
-app.use('/api/blog', require('./routes/blog'));
-app.use('/api/contact', require('./routes/contact'));
-app.use('/api/products', require('./routes/products'));
-app.use('/api/auction', require('./routes/auction'));
-app.use('/api/speaking', require('./routes/speaking'));
-app.use('/api/nonprofit', require('./routes/nonprofit'));
-app.use('/api/slides', require('./routes/slides'));
-app.use('/api/upload', require('./routes/upload'));
+// Boot: migrations → routes → listen
+runMigrations().then(() => {
+  // Routes (loaded AFTER migrations so admin seeding finds the table)
+  const { router: adminRouter } = require('./routes/admin');
+  app.use('/api/admin', adminRouter);
+  app.use('/api/orders', require('./routes/orders'));
+  app.use('/api/books', require('./routes/books'));
+  app.use('/api/blog', require('./routes/blog'));
+  app.use('/api/contact', require('./routes/contact'));
+  app.use('/api/products', require('./routes/products'));
+  app.use('/api/auction', require('./routes/auction'));
+  app.use('/api/speaking', require('./routes/speaking'));
+  app.use('/api/nonprofit', require('./routes/nonprofit'));
+  app.use('/api/slides', require('./routes/slides'));
+  app.use('/api/upload', require('./routes/upload'));
 
-// Health check
-app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
+  // Health check
+  app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
-// Error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
-    error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+  // Error handler
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).json({
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+    });
   });
-});
 
-app.listen(PORT, () => console.log(`RRR server running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`RRR server running on port ${PORT}`));
+}).catch(err => {
+  console.error('[Boot] Failed to run migrations:', err.message);
+  process.exit(1);
+});
 
 module.exports = app;
