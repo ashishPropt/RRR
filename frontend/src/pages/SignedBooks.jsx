@@ -3,10 +3,27 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import PageHero from '../components/PageHero';
 import { booksApi } from '../services/api';
+import { useCart } from '../context/CartContext';
 
 export default function SignedBooks() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [added, setAdded] = useState({});
+  const { addItem } = useCart();
+
+  const handleAdd = (book, isSigned) => {
+    addItem({
+      id: book.id,
+      type: 'book',
+      title: book.title,
+      price: isSigned ? Number(book.signed_price || book.price * 1.5) : Number(book.price),
+      isSigned,
+      image: book.cover_image,
+    });
+    const key = `${book.id}-${isSigned ? 'signed' : 'regular'}`;
+    setAdded(a => ({ ...a, [key]: true }));
+    setTimeout(() => setAdded(a => ({ ...a, [key]: false })), 1500);
+  };
 
   useEffect(() => {
     booksApi.getAll().then(r => setBooks(r.data)).catch(() => {}).finally(() => setLoading(false));
@@ -96,17 +113,34 @@ export default function SignedBooks() {
                     </div>
 
                     <div className="flex flex-wrap gap-3">
-                      <Link to="/contact" className="btn-gold flex-1 text-center">
-                        Order Signed Copy
-                      </Link>
+                      <button
+                        onClick={() => handleAdd(book, true)}
+                        className={`flex-1 py-3 px-4 rounded font-semibold text-sm transition-all text-center ${
+                          added[`${book.id}-signed`]
+                            ? 'bg-green-500 text-white'
+                            : 'bg-gold hover:opacity-90 text-white shadow'
+                        }`}
+                      >
+                        {added[`${book.id}-signed`] ? '✓ Added to Cart!' : '✍️ Add Signed Copy to Cart'}
+                      </button>
                       {book.amazon_url && (
-                        <a href={book.amazon_url} target="_blank" rel="noopener noreferrer" className="btn-outline flex-1 text-center">
+                        <a href={book.amazon_url} target="_blank" rel="noopener noreferrer" className="btn-outline flex-1 text-center text-sm">
                           Buy on Amazon
                         </a>
                       )}
                     </div>
-                    <p className="text-xs text-gray-400 mt-3 text-center">
-                      To order a signed copy, contact us with your name and personalization request.
+                    <button
+                      onClick={() => handleAdd(book, false)}
+                      className={`w-full mt-2 py-2 text-sm rounded border transition-all ${
+                        added[`${book.id}-regular`]
+                          ? 'border-green-400 text-green-600 bg-green-50'
+                          : 'border-gray-200 text-gray-500 hover:border-accent hover:text-accent'
+                      }`}
+                    >
+                      {added[`${book.id}-regular`] ? '✓ Added!' : `Add Regular Copy — $${Number(book.price).toFixed(2)}`}
+                    </button>
+                    <p className="text-xs text-gray-400 mt-2 text-center">
+                      Signed copies include personal inscription — add your request at checkout.
                     </p>
                   </div>
                 </div>

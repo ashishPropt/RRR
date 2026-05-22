@@ -1,8 +1,8 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
 
 export default function AdminLayout({ children }) {
-  const { logout } = useAdmin();
+  const { logout, username } = useAdmin();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -25,18 +25,39 @@ export default function AdminLayout({ children }) {
           <div className="text-white font-heading font-bold text-lg leading-tight">
             RRR Admin
           </div>
-          <div className="text-white/50 text-xs mt-1">Content Management</div>
+          <div className="text-white/50 text-xs mt-1">{username || 'Content Management'}</div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           <NavLink to="/admin/dashboard" className={navClass}>
             <span>📊</span> Dashboard
           </NavLink>
+
+          <div className="pt-2 pb-1 px-2 text-white/30 text-xs uppercase tracking-widest">Blog</div>
           <NavLink to="/admin/blog" end className={navClass}>
             <span>📝</span> Blog Posts
           </NavLink>
           <NavLink to="/admin/blog/new" className={navClass}>
             <span>➕</span> New Post
+          </NavLink>
+
+          <div className="pt-2 pb-1 px-2 text-white/30 text-xs uppercase tracking-widest">Shop</div>
+          <NavLink to="/admin/books" end className={navClass}>
+            <span>📚</span> Books
+          </NavLink>
+          <NavLink to="/admin/books/new" className={navClass}>
+            <span>➕</span> Add Book
+          </NavLink>
+          <NavLink to="/admin/products" end className={navClass}>
+            <span>🛍️</span> Boutique Items
+          </NavLink>
+          <NavLink to="/admin/products/new" className={navClass}>
+            <span>➕</span> Add Product
+          </NavLink>
+
+          <div className="pt-2 pb-1 px-2 text-white/30 text-xs uppercase tracking-widest">Orders</div>
+          <NavLink to="/admin/orders" className={navClass}>
+            <span>📦</span> Orders
           </NavLink>
         </nav>
 

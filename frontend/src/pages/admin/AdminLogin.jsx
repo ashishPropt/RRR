@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useAdmin } from '../../context/AdminContext';
 
 export default function AdminLogin() {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,11 +22,11 @@ export default function AdminLogin() {
     setError('');
     setLoading(true);
     try {
-      const res = await axios.post('/api/admin/login', { password });
-      login(res.data.token);
+      const res = await axios.post('/api/admin/login', { username: username.trim(), password });
+      login(res.data.token, res.data.username);
       navigate('/admin/dashboard');
-    } catch {
-      setError('Incorrect password. Please try again.');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -42,9 +43,7 @@ export default function AdminLogin() {
           </div>
 
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-2xl p-8">
-            <h1 className="font-heading text-xl font-bold text-primary mb-6 text-center">
-              Sign In
-            </h1>
+            <h1 className="font-heading text-xl font-bold text-primary mb-6 text-center">Sign In</h1>
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5">
@@ -52,17 +51,27 @@ export default function AdminLogin() {
               </div>
             )}
 
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Username</label>
+              <input
+                type="text"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition"
+                placeholder="ncabinda"
+                autoFocus
+                required
+              />
+            </div>
+
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Admin Password
-              </label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition"
                 placeholder="Enter password"
-                autoFocus
                 required
               />
             </div>

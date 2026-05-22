@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import PageHero from '../components/PageHero';
 import { productsApi } from '../services/api';
+import { useCart } from '../context/CartContext';
 
 const fallbackProducts = [
   { id: '1', name: 'RRR Motivational Mug', description: 'Start your morning with intention. "Regroup. Refocus. Rebuild." ceramic mug.', price: 18.99, category: 'Accessories', emoji: '☕' },
@@ -16,6 +17,8 @@ export default function Boutique() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
+  const [added, setAdded] = useState({});
+  const { addItem } = useCart();
 
   useEffect(() => {
     productsApi.getAll().then(r => {
@@ -25,6 +28,19 @@ export default function Boutique() {
 
   const categories = ['All', ...new Set(products.map(p => p.category))];
   const filtered = filter === 'All' ? products : products.filter(p => p.category === filter);
+
+  const handleAdd = (product) => {
+    addItem({
+      id: product.id,
+      type: 'product',
+      title: product.name,
+      price: Number(product.price),
+      image: product.image_url || null,
+      emoji: product.emoji || '🛍️',
+    });
+    setAdded(a => ({ ...a, [product.id]: true }));
+    setTimeout(() => setAdded(a => ({ ...a, [product.id]: false })), 1500);
+  };
 
   return (
     <>
@@ -51,8 +67,10 @@ export default function Boutique() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map(product => (
                 <div key={product.id} className="card group">
-                  <div className="h-52 bg-gradient-to-br from-primary/10 to-accent/20 flex items-center justify-center">
-                    <span className="text-7xl">{product.emoji || '🛍️'}</span>
+                  <div className="h-52 bg-gradient-to-br from-primary/10 to-accent/20 flex items-center justify-center overflow-hidden">
+                    {product.image_url
+                      ? <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                      : <span className="text-7xl">{product.emoji || '🛍️'}</span>}
                   </div>
                   <div className="p-6">
                     <span className="text-xs font-semibold text-accent uppercase tracking-widest">{product.category}</span>
@@ -60,7 +78,16 @@ export default function Boutique() {
                     <p className="text-gray-500 text-sm leading-relaxed mb-4">{product.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold text-primary">${Number(product.price).toFixed(2)}</span>
-                      <button className="btn-primary py-2 px-4 text-sm">Add to Cart</button>
+                      <button
+                        onClick={() => handleAdd(product)}
+                        className={`py-2 px-4 text-sm font-semibold rounded transition-all ${
+                          added[product.id]
+                            ? 'bg-green-500 text-white'
+                            : 'bg-accent hover:bg-accent-dark text-white'
+                        }`}
+                      >
+                        {added[product.id] ? '✓ Added!' : 'Add to Cart'}
+                      </button>
                     </div>
                   </div>
                 </div>

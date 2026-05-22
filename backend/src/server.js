@@ -33,9 +33,28 @@ const contactLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 10 });
 app.use('/api/', limiter);
 app.use('/api/contact', contactLimiter);
 
+// Run pending migrations on startup
+const fs = require('fs');
+const db = require('./config/database');
+(async () => {
+  const migrDir = path.join(__dirname, '..', 'migrations');
+  const files = ['004_cart_admin_users.sql'];
+  for (const f of files) {
+    try {
+      const sql = fs.readFileSync(path.join(migrDir, f), 'utf8');
+      await db.query(sql);
+      console.log(`[Migration] ${f} OK`);
+    } catch (e) {
+      // Ignore "already exists" errors
+      if (!e.message.includes('already exists')) console.warn(`[Migration] ${f}:`, e.message);
+    }
+  }
+})();
+
 // Routes
 const { router: adminRouter } = require('./routes/admin');
 app.use('/api/admin', adminRouter);
+app.use('/api/orders', require('./routes/orders'));
 app.use('/api/books', require('./routes/books'));
 app.use('/api/blog', require('./routes/blog'));
 app.use('/api/contact', require('./routes/contact'));
