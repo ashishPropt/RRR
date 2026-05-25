@@ -38,7 +38,7 @@ app.use('/api/contact', contactLimiter);
 // Run migrations THEN register routes (ensures tables exist before admin seeding)
 async function runMigrations() {
   const migrDir = path.join(__dirname, '..', 'migrations');
-  const files = ['004_cart_admin_users.sql'];
+  const files = ['004_cart_admin_users.sql', '005_payment_fields.sql'];
   for (const f of files) {
     try {
       const sql = fs.readFileSync(path.join(migrDir, f), 'utf8');
@@ -65,6 +65,8 @@ runMigrations().then(() => {
   app.use('/api/nonprofit', require('./routes/nonprofit'));
   app.use('/api/slides', require('./routes/slides'));
   app.use('/api/upload', require('./routes/upload'));
+  app.use('/api/payments', require('./routes/payments'));
+  app.use('/api/config', require('./routes/config'));
 
   // Health check
   app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));

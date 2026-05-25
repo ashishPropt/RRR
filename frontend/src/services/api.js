@@ -46,6 +46,16 @@ export const ordersApi = {
   create: (data) => api.post('/orders', data),
 };
 
+export const configApi = {
+  get: () => api.get('/config'),
+};
+
+export const paymentsApi = {
+  createPayPalOrder: (data) => api.post('/payments/create-order', data),
+  capturePayPalOrder: (data) => api.post('/payments/capture', data),
+  requestInvoice: (data) => api.post('/payments/invoice', data),
+};
+
 export const adminBooksApi = {
   getAll: (token) => api.get('/admin/books', { headers: { Authorization: `Bearer ${token}` } }),
   create: (token, data) => api.post('/admin/books', data, { headers: { Authorization: `Bearer ${token}` } }),
