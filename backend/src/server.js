@@ -38,7 +38,7 @@ app.use('/api/contact', contactLimiter);
 // Run migrations THEN register routes (ensures tables exist before admin seeding)
 async function runMigrations() {
   const migrDir = path.join(__dirname, '..', 'migrations');
-  const files = ['004_cart_admin_users.sql', '005_payment_fields.sql'];
+  const files = ['004_cart_admin_users.sql', '005_payment_fields.sql', '006_book_reviews.sql'];
   for (const f of files) {
     try {
       const sql = fs.readFileSync(path.join(migrDir, f), 'utf8');

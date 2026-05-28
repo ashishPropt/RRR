@@ -9,6 +9,7 @@ export const booksApi = {
   getAll: (params) => api.get('/books', { params }),
   getSigned: () => api.get('/books', { params: { signed: true } }),
   getById: (id) => api.get(`/books/${id}`),
+  getReviews: (id, limit = 5) => api.get(`/books/${id}/reviews`, { params: { limit } }),
 };
 
 export const blogApi = {

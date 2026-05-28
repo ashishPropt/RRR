@@ -26,6 +26,22 @@ router.get('/:id', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// GET top reviews for a book (public)
+router.get('/:id/reviews', async (req, res, next) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 5, 10);
+    const result = await db.query(
+      `SELECT id, reviewer_name, rating, title, body, review_date, verified
+       FROM book_reviews
+       WHERE book_id = $1
+       ORDER BY display_order ASC, created_at ASC
+       LIMIT $2`,
+      [req.params.id, limit]
+    );
+    res.json(result.rows);
+  } catch (err) { next(err); }
+});
+
 // POST create book (admin)
 router.post('/', async (req, res, next) => {
   try {
