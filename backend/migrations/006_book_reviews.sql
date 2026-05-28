@@ -2,7 +2,7 @@
 
 CREATE TABLE IF NOT EXISTS book_reviews (
   id            SERIAL PRIMARY KEY,
-  book_id       INTEGER NOT NULL REFERENCES books(id) ON DELETE CASCADE,
+  book_id       UUID NOT NULL REFERENCES books(id) ON DELETE CASCADE,
   reviewer_name VARCHAR(100) NOT NULL,
   rating        SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
   title         VARCHAR(200),
@@ -18,13 +18,18 @@ CREATE INDEX IF NOT EXISTS idx_book_reviews_book_id ON book_reviews(book_id, dis
 -- Seed reviews (only if table is empty to stay idempotent)
 DO $$
 DECLARE
-  b1 INTEGER;
-  b2 INTEGER;
+  b1 UUID;
+  b2 UUID;
 BEGIN
   IF (SELECT COUNT(*) FROM book_reviews) = 0 THEN
 
     SELECT id INTO b1 FROM books WHERE display_order = 1 LIMIT 1;
     SELECT id INTO b2 FROM books WHERE display_order = 2 LIMIT 1;
+
+    IF b1 IS NULL OR b2 IS NULL THEN
+      RAISE NOTICE 'Books not found — skipping review seed';
+      RETURN;
+    END IF;
 
     -- ── Book 1: Regroup Refocus Rebuild ──────────────────────────────────────
     INSERT INTO book_reviews (book_id, reviewer_name, rating, title, body, review_date, verified, display_order)
@@ -66,7 +71,7 @@ BEGIN
     (
       b2, 'Amazon Customer', 5,
       'A Journey Worth Reading',
-      'Natalie Cabinda writes with raw honesty about her roots and the resilience that carried her through extraordinary challenges. This memoir stays with you long after the last page. The way she traces her journey from her cultural origins to single motherhood in America is both deeply personal and universally relatable. Deeply moving.',
+      'Natalie Cabinda writes with raw honesty about her roots and the resilience that carried her through extraordinary challenges. This memoir stays with you long after the last page. The way she traces her journey from her cultural origins to single motherhood in America is both deeply personal and universally relatable.',
       '2016-12-03', false, 1
     ),
     (
