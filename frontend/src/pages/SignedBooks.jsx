@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import PageHero from '../components/PageHero';
@@ -17,59 +17,17 @@ function StarRating({ rating, size = 'sm' }) {
   );
 }
 
-// ── Single Review Card ────────────────────────────────────────────────────────
-function ReviewCard({ review }) {
-  const [expanded, setExpanded] = useState(false);
-  const isLong = review.body.length > 220;
-  const displayBody = !isLong || expanded ? review.body : review.body.slice(0, 220) + '…';
+// ── Auto-cycling Reviews Box ──────────────────────────────────────────────────
+const SLIDE_INTERVAL = 5000; // ms between auto-advances
 
-  const date = review.review_date
-    ? new Date(review.review_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-    : null;
-
-  return (
-    <div className="border border-gray-100 rounded-xl p-5 bg-white hover:shadow-sm transition-shadow">
-      {/* Header: stars + verified badge */}
-      <div className="flex items-center justify-between gap-2 mb-1">
-        <StarRating rating={review.rating} />
-        {review.verified && (
-          <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full flex-shrink-0">
-            ✓ Verified Purchase
-          </span>
-        )}
-      </div>
-
-      {/* Title */}
-      {review.title && (
-        <p className="font-semibold text-sm text-gray-800 mb-1">{review.title}</p>
-      )}
-
-      {/* Reviewer + date */}
-      <p className="text-xs text-gray-400 mb-3">
-        {review.reviewer_name}
-        {date && <> · {date}</>}
-      </p>
-
-      {/* Body */}
-      <p className="text-sm text-gray-600 leading-relaxed">
-        {displayBody}
-        {isLong && (
-          <button
-            onClick={() => setExpanded(e => !e)}
-            className="ml-1 text-accent font-semibold hover:underline focus:outline-none"
-          >
-            {expanded ? 'Show less' : 'Read more'}
-          </button>
-        )}
-      </p>
-    </div>
-  );
-}
-
-// ── Reviews Section for one book ──────────────────────────────────────────────
 function BookReviews({ bookId }) {
-  const [reviews, setReviews]   = useState([]);
-  const [loading, setLoading]   = useState(true);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [current, setCurrent] = useState(0);
+  const [visible, setVisible] = useState(true); // drives fade
+  const intervalRef = useRef(null);
+  const pausedRef   = useRef(false);
+  const countRef    = useRef(0); // stable ref so interval never goes stale
 
   useEffect(() => {
     if (!bookId) return;
@@ -79,17 +37,58 @@ function BookReviews({ bookId }) {
       .finally(() => setLoading(false));
   }, [bookId]);
 
+  // Keep countRef in sync
+  useEffect(() => { countRef.current = reviews.length; }, [reviews.length]);
+
+  // Fade-transition to a target index, then restart timer
+  const goTo = useCallback((idx) => {
+    setVisible(false);
+    clearInterval(intervalRef.current);
+    setTimeout(() => {
+      setCurrent(idx);
+      setVisible(true);
+      // Restart the auto-advance after manual navigation
+      if (countRef.current > 1) {
+        intervalRef.current = setInterval(advance, SLIDE_INTERVAL);
+      }
+    }, 250);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Defined after goTo so we can reference it in the restart above
+  function advance() {
+    if (pausedRef.current) return;
+    setVisible(false);
+    setTimeout(() => {
+      setCurrent(c => (c + 1) % countRef.current);
+      setVisible(true);
+    }, 250);
+  }
+
+  // Start auto-advance once reviews load
+  useEffect(() => {
+    if (reviews.length < 2) return;
+    intervalRef.current = setInterval(advance, SLIDE_INTERVAL);
+    return () => clearInterval(intervalRef.current);
+  }, [reviews.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const pause  = () => { pausedRef.current = true; };
+  const resume = () => { pausedRef.current = false; };
+
   if (loading) return (
     <div className="mt-8 text-center text-gray-400 text-sm py-4">Loading reviews…</div>
   );
   if (!reviews.length) return null;
 
   const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
+  const r   = reviews[current];
+  const date = r.review_date
+    ? new Date(r.review_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : null;
 
   return (
     <div className="mt-10">
       {/* Section header */}
-      <div className="flex items-center gap-3 mb-5">
+      <div className="flex items-center gap-3 mb-4">
         <h3 className="font-heading text-lg font-bold text-primary">Reader Reviews</h3>
         <div className="flex items-center gap-1.5">
           <StarRating rating={Math.round(avg)} />
@@ -98,11 +97,76 @@ function BookReviews({ bookId }) {
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
-        {reviews.map(r => <ReviewCard key={r.id} review={r} />)}
+      {/* Single review box */}
+      <div
+        className="border border-gray-200 rounded-2xl bg-gray-50 p-6 relative"
+        onMouseEnter={pause}
+        onMouseLeave={resume}
+      >
+        {/* Fading review content */}
+        <div
+          style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.25s ease' }}
+        >
+          {/* Stars + verified */}
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <StarRating rating={r.rating} />
+            {r.verified && (
+              <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+                ✓ Verified Purchase
+              </span>
+            )}
+          </div>
+
+          {/* Review title */}
+          {r.title && (
+            <p className="font-semibold text-sm text-gray-800 mb-1">{r.title}</p>
+          )}
+
+          {/* Reviewer + date */}
+          <p className="text-xs text-gray-400 mb-3">
+            {r.reviewer_name}{date && <> · {date}</>}
+          </p>
+
+          {/* Body */}
+          <p className="text-sm text-gray-600 leading-relaxed">{r.body}</p>
+        </div>
+
+        {/* Prev / Next arrows */}
+        {reviews.length > 1 && (
+          <>
+            <button
+              onClick={() => goTo((current - 1 + reviews.length) % reviews.length)}
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-primary hover:border-gray-400 transition text-xs"
+              aria-label="Previous review"
+            >‹</button>
+            <button
+              onClick={() => goTo((current + 1) % reviews.length)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-primary hover:border-gray-400 transition text-xs"
+              aria-label="Next review"
+            >›</button>
+          </>
+        )}
       </div>
 
-      <p className="mt-4 text-xs text-gray-400 text-center">
+      {/* Dot indicators */}
+      {reviews.length > 1 && (
+        <div className="flex justify-center gap-1.5 mt-3">
+          {reviews.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className={`rounded-full transition-all ${
+                i === current
+                  ? 'w-5 h-2 bg-accent'
+                  : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
+              }`}
+              aria-label={`Review ${i + 1}`}
+            />
+          ))}
+        </div>
+      )}
+
+      <p className="mt-3 text-xs text-gray-400 text-center">
         Reviews from verified Amazon purchasers and readers.
       </p>
     </div>
